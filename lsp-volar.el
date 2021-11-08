@@ -1,0 +1,160 @@
+;;; lsp-volar.el --- A lsp-mode client for Vue3 -*- lexical-binding: t; -*-
+;;
+;; Copyright (C) 2021 JadeStrong
+;;
+;; Author: JadeStrong <https://github.com/jadestrong>
+;; Maintainer: JadeStrong <jadestrong@163.com>
+;; Created: November 08, 2021
+;; Modified: November 08, 2021
+;; Version: 0.0.1
+;; Keywords: abbrev bib c calendar comm convenience data docs emulations extensions faces files frames games hardware help hypermedia i18n internal languages lisp local maint mail matching mouse multimedia news outlines processes terminals tex tools unix vc wp
+;; Homepage: https://github.com/jadestrong/lsp-volar
+;; Package-Requires: ((emacs "24.3"))
+;;
+;; This file is not part of GNU Emacs.
+
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; For a full copy of the GNU General Public License
+;; see <http://www.gnu.org/licenses/>.
+
+;;
+;;; Commentary:
+;;
+;; provide the connection to lsp-mode and volar language server
+;;
+;;; Code:
+(require 'lsp-mode)
+
+(defgroup lsp-volar nil
+  "lsp support for vue3"
+  :group 'lsp-volar)
+
+(defcustom lsp-volar-server-command '("volar-server")
+  "Command to start vetur."
+  :type '(repeat string)
+  :risky t
+  :package-version '(lsp-mode . "8.0"))
+
+(lsp-dependency 'typescript
+                '(:system "tsserver")
+                '(:npm :package "typescript"
+                       :path "tsserver"))
+
+(lsp-dependency 'volar-language-server
+                '(:system "volar-server")
+                '(:npm :package "@volar/server" :path "@volar/server"))
+
+(lsp-register-custom-settings
+ '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root)))
+                                          (concat project-root "node_modules/typescript/lib/tsserverlibrary.js")
+                                        "")) t)
+   ("languageFeatures.references" t t)
+   ("languageFeatures.definition" t t)
+   ("languageFeatures.typeDefinition" t t)
+   ("languageFeatures.callHierarchy" t t)
+   ("languageFeatures.hover" t t)
+   ("languageFeatures.rename" t t)
+   ("languageFeatures.renameFileRefactoring" t t)
+   ("languageFeatures.signatureHelp" t t)
+   ("languageFeatures.codeAction" t t)
+   ("languageFeatures.completion.defaultTagNameCase" "both" t)
+   ("languageFeatures.completion.defaultAttrNameCase" "kebabCase" t t)
+   ("languageFeatures.completion.getDocumentNameCasesRequest" nil t)
+   ("languageFeatures.completion.getDocumentSelectionRequest" nil t)
+   ("languageFeatures.schemaRequestService" t t)
+
+   ("documentFeatures.documentColor" nil t)
+   ("documentFeatures.selectionRange" t t)
+   ("documentFeatures.foldingRange" t t)
+   ("documentFeatures.linkedEditingRange" t t)
+   ("documentFeatures.documentSymbol" t t)
+   ("documentFeatures.documentFormatting" 100 t)
+   ("html.hover" t t)))
+
+(lsp-register-client
+ (make-lsp-client
+  :new-connection (lsp-stdio-connection
+                   (lambda ()
+                     `(,(lsp-package-path 'volar-language-server) "--stdio")))
+  :activation-fn (lambda (filename _mode)
+                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
+                   (string= (file-name-extension filename) "vue"))
+  :priority 0
+  :multi-root t
+  :server-id 'volar-api
+  :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
+                                               (lsp-configuration-section "html")
+                                               (lsp-configuration-section "languageFeatures")))
+  :initialized-fn (lambda (workspace)
+                    (with-lsp-workspace workspace
+                      (lsp--set-configuration
+                       (ht-merge (lsp-configuration-section "typescript")
+                                 (lsp-configuration-section "html")
+                                 (lsp-configuration-section "languageFeatures")))))
+  :download-server-fn (lambda (_client callback error-callback _update?)
+                        (lsp-package-ensure 'volar-server
+                                            callback error-callback))))
+
+(lsp-register-client
+ (make-lsp-client
+  :new-connection (lsp-stdio-connection
+                   (lambda ()
+                     `(,(lsp-package-path 'volar-language-server) "--stdio")))
+  :activation-fn (lambda (filename _mode)
+                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
+                   (string= (file-name-extension filename) "vue"))
+  :priority 0
+  :multi-root t
+  :add-on? t
+  :server-id 'volar-doc
+  :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
+                                               (ht ("languageFeatures" (ht-merge (ht ("semanticTokens" nil))
+                                                                                 (ht ("documentHighlight" t))
+                                                                                 (ht ("documentLink" t))
+                                                                                 (ht ("codeLens" t))
+                                                                                 (ht ("diagnostics" t)))))))
+  :initialized-fn (lambda (workspace)
+                    (with-lsp-workspace workspace
+                      (lsp--set-configuration
+                       (ht-merge (lsp-configuration-section "typescript")
+                                 (lsp-configuration-section "languageFeatures")))))
+  :download-server-fn (lambda (_client callback error-callback _update?)
+                        (lsp-package-ensure 'volar-server
+                                            callback error-callback))))
+
+(lsp-register-client
+ (make-lsp-client
+  :new-connection (lsp-stdio-connection
+                   (lambda ()
+                     `(,(lsp-package-path 'volar-language-server) "--stdio")))
+  :activation-fn (lambda (filename _mode)
+                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
+                   (string= (file-name-extension filename) "vue"))
+  :priority 0
+  :multi-root t
+  :add-on? t
+  :server-id 'volar-html
+  :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
+                                               (lsp-configuration-section "documentFeatures")))
+  :initialized-fn (lambda (workspace)
+                    (with-lsp-workspace workspace
+                      (lsp--set-configuration
+                       (ht-merge (lsp-configuration-section "typescript")
+                                 (lsp-configuration-section "documentFeatures")))))
+  :download-server-fn (lambda (_client callback error-callback _update?)
+                        (lsp-package-ensure 'volar-server
+                                            callback error-callback))))
+
+;; (lsp-consistency-check lsp-volar)
+
+(provide 'lsp-volar)
+;;; lsp-volar.el ends here
