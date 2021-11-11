@@ -44,6 +44,14 @@
   :risky t
   :package-version '(lsp-mode . "8.0"))
 
+(defun lsp-volar-get-typescript-server-path ()
+  "Get tsserver.js file path."
+  (if-let ((package-path (lsp-package-path 'typescript))
+           (system-server-path (apply #'f-join (append (cl-subseq (f-split (file-truename package-path)) 0 -2) '("lib" "tsserver.js"))))
+           (is-exist (f-file-p system-server-path)))
+      system-server-path
+    ""))
+
 (lsp-dependency 'typescript
                 '(:system "tsserver")
                 '(:npm :package "typescript"
@@ -54,9 +62,11 @@
                 '(:npm :package "@volar/server" :path "@volar/server"))
 
 (lsp-register-custom-settings
- '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root)))
-                                          (concat project-root "node_modules/typescript/lib/tsserverlibrary.js")
-                                        "")) t)
+ '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root))
+                                                (server-path (concat project-root "node_modules/typescript/lib/tsserverlibrary.js"))
+                                                (is-exist (file-exists-p server-path)))
+                                           server-path
+                                        (lsp-volar-get-typescript-server-path))) t)
    ("languageFeatures.references" t t)
    ("languageFeatures.definition" t t)
    ("languageFeatures.typeDefinition" t t)
