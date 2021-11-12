@@ -99,7 +99,7 @@
                    (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
                    (string= (file-name-extension filename) "vue"))
   :priority 0
-  :multi-root t
+  :multi-root nil
   :server-id 'volar-api
   :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
                                                (lsp-configuration-section "html")
@@ -123,7 +123,7 @@
                    (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
                    (string= (file-name-extension filename) "vue"))
   :priority 0
-  :multi-root t
+  :multi-root nil
   :add-on? t
   :server-id 'volar-doc
   :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
@@ -150,7 +150,7 @@
                    (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
                    (string= (file-name-extension filename) "vue"))
   :priority 0
-  :multi-root t
+  :multi-root nil
   :add-on? t
   :server-id 'volar-html
   :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
