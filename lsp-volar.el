@@ -33,6 +33,7 @@
 ;;
 ;;; Code:
 (require 'lsp-mode)
+(require 'projectile)
 
 (defgroup lsp-volar nil
   "lsp support for vue3"
@@ -43,6 +44,11 @@
   :type '(repeat string)
   :risky t
   :package-version '(lsp-mode . "8.0"))
+
+(defcustom lsp-volar-take-over-mode t
+  "Enable Take Over Mode."
+  :type 'boolean
+  :group 'lsp-volar)
 
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
@@ -90,14 +96,29 @@
    ("documentFeatures.documentFormatting" 100 t)
    ("html.hover" t t)))
 
+(defun lsp-volar--activate-p (filename &optional _)
+  "Check if the volar-language-server should be enabled base on FILENAME."
+  (if lsp-volar-take-over-mode
+      (and (or (f-file-p (f-join (lsp-workspace-root) "vue.config.js"))
+               (locate-dominating-file (buffer-file-name) "vue.config.js")
+               (f-file-p (f-join (lsp-workspace-root) "vue.config.ts"))
+               (locate-dominating-file (buffer-file-name) "vue.config.ts")
+               (f-file-p (f-join (lsp-workspace-root) "vite.config.js"))
+               (locate-dominating-file (buffer-file-name) "vite.cofnig.js")
+               (f-file-p (f-join (lsp-workspace-root) "vite.config.ts"))
+               (locate-dominating-file (buffer-file-name) "vite.config.ts"))
+           (or (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" filename)
+                   (and (derived-mode-p 'js-mode 'typescript-mode)
+                        (not (derived-mode-p 'json-mode))))
+               (string= (file-name-extension filename) "vue")))
+   (string= (file-name-extension filename) "vue")))
+
 (lsp-register-client
  (make-lsp-client
   :new-connection (lsp-stdio-connection
                    (lambda ()
                      `(,(lsp-package-path 'volar-language-server) "--stdio")))
-  :activation-fn (lambda (filename _mode)
-                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
-                   (string= (file-name-extension filename) "vue"))
+  :activation-fn 'lsp-volar--activate-p
   :priority 0
   :multi-root nil
   :server-id 'volar-api
@@ -119,9 +140,7 @@
   :new-connection (lsp-stdio-connection
                    (lambda ()
                      `(,(lsp-package-path 'volar-language-server) "--stdio")))
-  :activation-fn (lambda (filename _mode)
-                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
-                   (string= (file-name-extension filename) "vue"))
+  :activation-fn 'lsp-volar--activate-p
   :priority 0
   :multi-root nil
   :add-on? t
@@ -146,9 +165,7 @@
   :new-connection (lsp-stdio-connection
                    (lambda ()
                      `(,(lsp-package-path 'volar-language-server) "--stdio")))
-  :activation-fn (lambda (filename _mode)
-                   (message "lsp-volar %s %s" filename (string= (file-name-extension filename) "vue"))
-                   (string= (file-name-extension filename) "vue"))
+  :activation-fn 'lsp-volar--activate-p
   :priority 0
   :multi-root nil
   :add-on? t

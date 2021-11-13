@@ -28,6 +28,13 @@ in `config.el`
 
 1. use `npm/yarn` , `npm install -g @volar/server`
 
+# Customization
+
+## lsp-volar
+
+### `lsp-volar-take-over-mode`
+It is enabled by default. If you want disable it, add `(setq lsp-volar-take-over-mode nil)` to your config file. [What is Take Over Mode?](https://github.com/johnsoncodehk/volar/discussions/471 "What is Take Over Mode?") 
+
 # Reference
 
 1. [Tutorial: nvim-lspconfig - how to set up multiple language servers](https://github.com/johnsoncodehk/volar/discussions/606 "Tutorial: nvim-lspconfig - how to set up multiple language servers")  
