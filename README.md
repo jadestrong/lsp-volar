@@ -21,7 +21,7 @@ in `config.el`
 
 ``` emacs-lisp
 (straight-use-package
- '(lsp-volar :type git :host github :repo "merrickluo/lsp-volar"))
+ '(lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
 ```
 
 # Language Server
