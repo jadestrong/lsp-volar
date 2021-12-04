@@ -69,7 +69,7 @@
 
 (lsp-register-custom-settings
  '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root))
-                                                (server-path (concat project-root "node_modules/typescript/lib/tsserverlibrary.js"))
+                                                (server-path (concat project-root "node_modules/typescript/built/local/tsserver.js"))
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
                                         (lsp-volar-get-typescript-server-path))) t)
