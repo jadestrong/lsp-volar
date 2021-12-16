@@ -19,10 +19,37 @@ in `config.el`
 
 ## straight.el
 
+[First, place the following bootstrap code in your init-file:](https://github.com/raxod502/straight.el#getting-started)
+
+``` emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+```
+
+Then install `lsp-volar` package:
 ``` emacs-lisp
 (straight-use-package
  '(lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
 ```
+
+Last use it:
+
+``` emacs-lisp
+(use-package lsp-volar
+  :straight t)
+```
+
+`
 
 # Language Server
 
