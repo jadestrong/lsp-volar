@@ -39,12 +39,6 @@
   "lsp support for vue3"
   :group 'lsp-volar)
 
-(defcustom lsp-volar-server-command '("volar-server")
-  "Command to start vetur."
-  :type '(repeat string)
-  :risky t
-  :package-version '(lsp-mode . "8.0"))
-
 (defcustom lsp-volar-take-over-mode t
   "Enable Take Over Mode."
   :type 'boolean
@@ -65,7 +59,7 @@
 
 (lsp-dependency 'volar-language-server
                 '(:system "volar-server")
-                '(:npm :package "@volar/server" :path "@volar/server"))
+                '(:npm :package "@volar/server" :path "volar-server"))
 
 (lsp-register-custom-settings
  '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root))
@@ -133,7 +127,7 @@
                                  (lsp-configuration-section "html")
                                  (lsp-configuration-section "languageFeatures")))))
   :download-server-fn (lambda (_client callback error-callback _update?)
-                        (lsp-package-ensure 'volar-server
+                        (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
 
 (lsp-register-client
@@ -158,7 +152,7 @@
                        (ht-merge (lsp-configuration-section "typescript")
                                  (lsp-configuration-section "languageFeatures")))))
   :download-server-fn (lambda (_client callback error-callback _update?)
-                        (lsp-package-ensure 'volar-server
+                        (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
 
 (lsp-register-client
@@ -179,7 +173,7 @@
                        (ht-merge (lsp-configuration-section "typescript")
                                  (lsp-configuration-section "documentFeatures")))))
   :download-server-fn (lambda (_client callback error-callback _update?)
-                        (lsp-package-ensure 'volar-server
+                        (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
 
 ;; (lsp-consistency-check lsp-volar)
