@@ -33,7 +33,6 @@
 ;;
 ;;; Code:
 (require 'lsp-mode)
-(require 'projectile)
 
 (defgroup lsp-volar nil
   "lsp support for vue3"
@@ -62,7 +61,7 @@
                 '(:npm :package "@volar/server" :path "volar-server"))
 
 (lsp-register-custom-settings
- '(("typescript.serverPath" (lambda () (if-let ((project-root (projectile-project-root))
+ '(("typescript.serverPath" (lambda () (if-let ((project-root (lsp-workspace-root))
                                                 (server-path (concat project-root "node_modules/typescript/lib/tsserverlibrary.js"))
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
@@ -101,7 +100,7 @@
                (locate-dominating-file (buffer-file-name) "vite.cofnig.js")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.ts")))
                (locate-dominating-file (buffer-file-name) "vite.config.ts")
-               (f-file-p (f-join (projectile-project-root) ".volarrc")))
+               (f-file-p (f-join (lsp-workspace-root) ".volarrc")))
            (or (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" filename)
                    (and (derived-mode-p 'js-mode 'typescript-mode)
                         (not (derived-mode-p 'json-mode))))
@@ -175,8 +174,6 @@
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
-
-;; (lsp-consistency-check lsp-volar)
 
 (provide 'lsp-volar)
 ;;; lsp-volar.el ends here
