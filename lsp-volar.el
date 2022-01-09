@@ -106,7 +106,7 @@
                (locate-dominating-file (buffer-file-name) "vite.cofnig.js")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.ts")))
                (locate-dominating-file (buffer-file-name) "vite.config.ts")
-               (f-file-p (f-join (lsp-workspace-root) ".volarrc")))
+               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) ".volarrc"))))
            (or (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" filename)
                    (and (derived-mode-p 'js-mode 'typescript-mode)
                         (not (derived-mode-p 'json-mode))))
