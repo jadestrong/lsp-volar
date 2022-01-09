@@ -103,7 +103,7 @@
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.ts")))
                (locate-dominating-file (buffer-file-name) "vue.config.ts")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.js")))
-               (locate-dominating-file (buffer-file-name) "vite.cofnig.js")
+               (locate-dominating-file (buffer-file-name) "vite.config.js")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.ts")))
                (locate-dominating-file (buffer-file-name) "vite.config.ts")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) ".volarrc"))))
