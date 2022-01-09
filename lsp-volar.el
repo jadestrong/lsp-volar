@@ -33,6 +33,7 @@
 ;;
 ;;; Code:
 (require 'lsp-mode)
+(require 'json)
 
 (defgroup lsp-volar nil
   "lsp support for vue3"
@@ -95,6 +96,15 @@
    ("documentFeatures.documentFormatting" 100 t)
    ("html.hover" t t)))
 
+(defun lsp-volar-vite-vue-project-p (workspace-root)
+  "Check if the 'vue' is preset in the package.json file when the project is a vite project."
+  (if-let ((package-json (f-join workspace-root "package.json"))
+           (exist (f-file-p package-json))
+           (config (json-read-file package-json))
+           (dependencies (alist-get 'dependencies config)))
+      (alist-get 'vue dependencies)
+  nil))
+
 (defun lsp-volar--activate-p (filename &optional _)
   "Check if the volar-language-server should be enabled base on FILENAME."
   (if lsp-volar-take-over-mode
@@ -102,10 +112,10 @@
                (locate-dominating-file (buffer-file-name) "vue.config.js")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.ts")))
                (locate-dominating-file (buffer-file-name) "vue.config.ts")
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.js")))
-               (locate-dominating-file (buffer-file-name) "vite.config.js")
+               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.js")) (lsp-volar-vite-vue-project-p (lsp-workspace-root)))
+               (if-let ((js-workspace-root (locate-dominating-file (buffer-file-name) "vite.config.js"))) (lsp-volar-vite-vue-project-p js-workspace-root) nil)
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.ts")))
-               (locate-dominating-file (buffer-file-name) "vite.config.ts")
+               (if-let ((ts-workspace-root (locate-dominating-file (buffer-file-name) "vite.config.ts"))) (lsp-volar-vite-vue-project-p ts-workspace-root) nil)
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) ".volarrc"))))
            (or (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" filename)
                    (and (derived-mode-p 'js-mode 'typescript-mode)
