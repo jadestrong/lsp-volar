@@ -44,11 +44,6 @@
   :type 'boolean
   :group 'lsp-volar)
 
-(defcustom lsp-volar-typescript-suggest-auto-imports nil
-  "Skip calculate auto import can make auto-complete much faster."
-  :type 'boolean
-  :group 'lsp-volar)
-
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
   (if-let ((package-path (lsp-package-path 'typescript))
@@ -72,7 +67,6 @@
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
                                         (lsp-volar-get-typescript-server-path))) t)
-   ("typescript.suggest.autoImports" lsp-volar-typescript-suggest-auto-imports t)
    ("languageFeatures.references" t t)
    ("languageFeatures.definition" t t)
    ("languageFeatures.typeDefinition" t t)

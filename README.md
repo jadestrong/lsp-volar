@@ -49,7 +49,11 @@ Last use it:
   :straight t)
 ```
 
-`
+# Changelog
+
+1. In `volar 0.30.0` you can skip calculate auto import by set `lsp-typescript-suggest-auto-imports` to `nil` to improve the completion speed. Check [this issue](https://github.com/johnsoncodehk/volar/issues/808#issuecomment-998895416).
+   
+   `lsp-typescript-suggest-auto-imports` is a setting registed by `lsp-vetur`.
 
 # Language Server
 
