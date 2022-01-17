@@ -44,13 +44,16 @@
   :type 'boolean
   :group 'lsp-volar)
 
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
   (if-let ((package-path (lsp-package-path 'typescript))
-           (system-server-path (apply #'f-join (append (cl-subseq (f-split (file-truename package-path)) 0 -2) '("lib" "tsserver.js"))))
+           (system-server-path (apply #'f-join (if IS-WINDOWS
+                                                   (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -1) '("node_modules" "typescript" "lib" "tsserver.js"))
+                                                 (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -2) '("lib" "tsserver.js")))))
            (is-exist (f-file-p system-server-path)))
       system-server-path
-    ""))
+    (progn (message "[lsp-volar WARN] Please make sure a global typescript package (npm install -g typescript) is installed, otherwise open a issue.") "")))
 
 (lsp-dependency 'typescript
                 '(:system "tsserver")
@@ -63,7 +66,7 @@
 
 (lsp-register-custom-settings
  '(("typescript.serverPath" (lambda () (if-let ((project-root (lsp-workspace-root))
-                                                (server-path (concat project-root "node_modules/typescript/lib/tsserverlibrary.js"))
+                                                (server-path (f-join project-root "node_modules/typescript/lib/tsserverlibrary.js"))
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
                                         (lsp-volar-get-typescript-server-path))) t)
