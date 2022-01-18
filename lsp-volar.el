@@ -53,7 +53,7 @@
                                                  (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -2) '("lib" "tsserver.js")))))
            (is-exist (f-file-p system-server-path)))
       system-server-path
-    (progn (message "[lsp-volar WARN] Please make sure a global typescript package (npm install -g typescript) is installed, otherwise open a issue.") "")))
+    (progn (lsp--error "[lsp-volar] Typescript is not detected correctly. Please ensure the npm package typescript is installed in your project or system (npm install -g typescript), otherwise open an issue.") "")))
 
 (lsp-dependency 'typescript
                 '(:system "tsserver")
