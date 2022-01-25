@@ -9,7 +9,7 @@
 ;; Version: 0.0.1
 ;; Keywords: abbrev bib c calendar comm convenience data docs emulations extensions faces files frames games hardware help hypermedia i18n internal languages lisp local maint mail matching mouse multimedia news outlines processes terminals tex tools unix vc wp
 ;; Homepage: https://github.com/jadestrong/lsp-volar
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "25.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -36,7 +36,7 @@
 (require 'json)
 
 (defgroup lsp-volar nil
-  "lsp support for vue3"
+  "Lsp support for vue3."
   :group 'lsp-volar)
 
 (defcustom lsp-volar-take-over-mode t
@@ -44,16 +44,16 @@
   :type 'boolean
   :group 'lsp-volar)
 
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst lsp-volar--is-windows (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
   (if-let ((package-path (lsp-package-path 'typescript))
-           (system-server-path (apply #'f-join (if IS-WINDOWS
+           (system-server-path (apply #'f-join (if lsp-volar--is-windows
                                                    (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -1) '("node_modules" "typescript" "lib" "tsserver.js"))
                                                  (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -2) '("lib" "tsserver.js")))))
            (is-exist (f-file-p system-server-path)))
       system-server-path
-    (progn (lsp--error "[lsp-volar] Typescript is not detected correctly. Please ensure the npm package typescript is installed in your project or system (npm install -g typescript), otherwise open an issue.") "")))
+    (progn (lsp--error "[lsp-volar] Typescript is not detected correctly. Please ensure the npm package typescript is installed in your project or system (npm install -g typescript), otherwise open an issue") "")))
 
 (lsp-dependency 'typescript
                 '(:system "tsserver")
@@ -94,7 +94,7 @@
    ("html.hover" t t)))
 
 (defun lsp-volar-vite-vue-project-p (workspace-root)
-  "Check if the 'vue' is preset in the package.json file when the project is a vite project."
+  "Check if the 'vue' package is present in the package.json file in the WORKSPACE-ROOT when the project is a vite project."
   (if-let ((package-json (f-join workspace-root "package.json"))
            (exist (f-file-p package-json))
            (config (json-read-file package-json))
