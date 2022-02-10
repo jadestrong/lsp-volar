@@ -107,6 +107,8 @@
   (if lsp-volar-take-over-mode
       (and (or (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.js")))
                (locate-dominating-file (buffer-file-name) "vue.config.js")
+               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.mjs")))
+               (locate-dominating-file (buffer-file-name) "vue.config.mjs")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.ts")))
                (locate-dominating-file (buffer-file-name) "vue.config.ts")
                (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.js")) (lsp-volar-vite-vue-project-p (lsp-workspace-root)))
