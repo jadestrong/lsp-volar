@@ -44,6 +44,12 @@
   :type 'boolean
   :group 'lsp-volar)
 
+(defcustom lsp-volar-activate-file ".volarrc"
+  "A file with a custom name placed in WORKSPACE-ROOT is used to force enable
+ volar when there is no package.json in the WORKSPACE-ROOT."
+  :type 'string
+  :group 'lsp-volar)
+
 (defconst lsp-volar--is-windows (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
@@ -93,8 +99,8 @@
    ("documentFeatures.documentFormatting" 100 t)
    ("html.hover" t t)))
 
-(defun lsp-volar-vite-vue-project-p (workspace-root)
-  "Check if the 'vue' package is present in the package.json file in the WORKSPACE-ROOT when the project is a vite project."
+(defun lsp-volar--vue-project-p (workspace-root)
+  "Check if the 'vue' package is present in the package.json file in the WORKSPACE-ROOT."
   (if-let ((package-json (f-join workspace-root "package.json"))
            (exist (f-file-p package-json))
            (config (json-read-file package-json))
@@ -105,17 +111,9 @@
 (defun lsp-volar--activate-p (filename &optional _)
   "Check if the volar-language-server should be enabled base on FILENAME."
   (if lsp-volar-take-over-mode
-      (and (or (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.js")))
-               (locate-dominating-file (buffer-file-name) "vue.config.js")
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.mjs")))
-               (locate-dominating-file (buffer-file-name) "vue.config.mjs")
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vue.config.ts")))
-               (locate-dominating-file (buffer-file-name) "vue.config.ts")
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.js")) (lsp-volar-vite-vue-project-p (lsp-workspace-root)))
-               (if-let ((js-workspace-root (locate-dominating-file (buffer-file-name) "vite.config.js"))) (lsp-volar-vite-vue-project-p js-workspace-root) nil)
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) "vite.config.ts")))
-               (if-let ((ts-workspace-root (locate-dominating-file (buffer-file-name) "vite.config.ts"))) (lsp-volar-vite-vue-project-p ts-workspace-root) nil)
-               (and (lsp-workspace-root) (f-file-p (f-join (lsp-workspace-root) ".volarrc"))))
+      (and (or
+            (and (lsp-workspace-root) (lsp-volar--vue-project-p (lsp-workspace-root)))
+            (and (lsp-workspace-root) lsp-volar-activate-file (f-file-p (f-join (lsp-workspace-root) lsp-volar-activate-file))))
            (or (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" filename)
                    (and (derived-mode-p 'js-mode 'typescript-mode)
                         (not (derived-mode-p 'json-mode))))
