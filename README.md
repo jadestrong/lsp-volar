@@ -58,6 +58,7 @@ Last use it:
 # Language Server
 
 1. use `npm/yarn` , `npm install -g @volar/server`
+2. `M-x lsp-install-server` select `volar-api` or `volar-doc` or `volar-html`
 
 # Customization
 
@@ -65,6 +66,9 @@ Last use it:
 
 ### `lsp-volar-take-over-mode`
 It is enabled by default. If you want disable it, add `(setq lsp-volar-take-over-mode nil)` to your config file. [What is Take Over Mode?](https://github.com/johnsoncodehk/volar/discussions/471 "What is Take Over Mode?") 
+
+### `lsp-volar-activate-file`
+If your project don't have a `package.json` file with `vue` dependencies in `workspace-root`, such as a *yarn workspace* / *mono-repo* project, you can add a file with a custom name to force enable `@volar/server` for this project. The default file name is `.volarrc`. You can specify any file name by modifying the file `lsp-volar-activate-file` variable.
 
 # Reference
 
