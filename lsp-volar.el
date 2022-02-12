@@ -100,7 +100,8 @@
    ("html.hover" t t)))
 
 (defun lsp-volar--vue-project-p (workspace-root)
-  "Check if the 'vue' package is present in the package.json file in the WORKSPACE-ROOT."
+  "Check if the 'vue' package is present in the package.json file
+in the WORKSPACE-ROOT."
   (if-let ((package-json (f-join workspace-root "package.json"))
            (exist (f-file-p package-json))
            (config (json-read-file package-json))
