@@ -138,7 +138,19 @@ in the WORKSPACE-ROOT."
                       (lsp--set-configuration
                        (ht-merge (lsp-configuration-section "typescript")
                                  (lsp-configuration-section "html")
-                                 (lsp-configuration-section "languageFeatures")))))
+                                 (lsp-configuration-section "languageFeatures")))
+                      (lsp--server-register-capability
+                       (lsp-make-registration
+                        :id "random-id"
+                        :method "workspace/didChangeWatchedFiles"
+                        :register-options? (lsp-make-did-change-watched-files-registration-options
+                                            :watchers
+                                            `[,(lsp-make-file-system-watcher :glob-pattern "**/*.js")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.ts")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.vue")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.jsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.tsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.json")])))))
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
@@ -163,7 +175,19 @@ in the WORKSPACE-ROOT."
                     (with-lsp-workspace workspace
                       (lsp--set-configuration
                        (ht-merge (lsp-configuration-section "typescript")
-                                 (lsp-configuration-section "languageFeatures")))))
+                                 (lsp-configuration-section "languageFeatures")))
+                      (lsp--server-register-capability
+                       (lsp-make-registration
+                        :id "random-id"
+                        :method "workspace/didChangeWatchedFiles"
+                        :register-options? (lsp-make-did-change-watched-files-registration-options
+                                            :watchers
+                                            `[,(lsp-make-file-system-watcher :glob-pattern "**/*.js")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.ts")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.vue")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.jsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.tsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.json")])))))
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
@@ -184,7 +208,19 @@ in the WORKSPACE-ROOT."
                     (with-lsp-workspace workspace
                       (lsp--set-configuration
                        (ht-merge (lsp-configuration-section "typescript")
-                                 (lsp-configuration-section "documentFeatures")))))
+                                 (lsp-configuration-section "documentFeatures")))
+                      (lsp--server-register-capability
+                       (lsp-make-registration
+                        :id "random-id"
+                        :method "workspace/didChangeWatchedFiles"
+                        :register-options? (lsp-make-did-change-watched-files-registration-options
+                                            :watchers
+                                            `[,(lsp-make-file-system-watcher :glob-pattern "**/*.js")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.ts")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.vue")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.jsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.tsx")
+                                              ,(lsp-make-file-system-watcher :glob-pattern "**/*.json")])))))
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
