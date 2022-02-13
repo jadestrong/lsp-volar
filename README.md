@@ -55,6 +55,8 @@ Last use it:
    
    `lsp-typescript-suggest-auto-imports` is a setting registed by `lsp-vetur`.
 
+   **This will disable the auto completation of third-party libraries and affect the experience, so you don't have to set it to `nil` unless you feel that there is a significant performance imporvement after disabling it** .
+
 # Language Server
 
 1. use `npm/yarn` , `npm install -g @volar/server`
