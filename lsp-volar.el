@@ -85,19 +85,20 @@
    ("languageFeatures.renameFileRefactoring" t t)
    ("languageFeatures.signatureHelp" t t)
    ("languageFeatures.codeAction" t t)
+   ("languageFeatures.workspaceSymbol" t t)
    ("languageFeatures.completion.defaultTagNameCase" "both" t)
    ("languageFeatures.completion.defaultAttrNameCase" "kebabCase" t t)
-   ("languageFeatures.completion.getDocumentNameCasesRequest" nil t)
-   ("languageFeatures.completion.getDocumentSelectionRequest" nil t)
-   ("languageFeatures.schemaRequestService" t t)
+   ("languageFeatures.completion.getDocumentNameCasesRequest" t t)
+   ("languageFeatures.completion.getDocumentSelectionRequest" t t)
+   ("languageFeatures.schemaRequestService.getDocumentContentRequest" t t)
 
-   ("documentFeatures.documentColor" nil t)
    ("documentFeatures.selectionRange" t t)
    ("documentFeatures.foldingRange" t t)
    ("documentFeatures.linkedEditingRange" t t)
    ("documentFeatures.documentSymbol" t t)
-   ("documentFeatures.documentFormatting" 100 t)
-   ("html.hover" t t)))
+   ("documentFeatures.documentColor" t t)
+   ("documentFeatures.documentFormatting.defaultPrintWidth" 100 t)
+   ("documentFeatures.documentFormatting.getDocumentPrintWidthRequest" t t)))
 
 (defun lsp-volar--vue-project-p (workspace-root)
   "Check if the 'vue' package is present in the package.json file
@@ -131,14 +132,9 @@ in the WORKSPACE-ROOT."
   :multi-root nil
   :server-id 'volar-api
   :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
-                                               (lsp-configuration-section "html")
                                                (lsp-configuration-section "languageFeatures")))
   :initialized-fn (lambda (workspace)
                     (with-lsp-workspace workspace
-                      (lsp--set-configuration
-                       (ht-merge (lsp-configuration-section "typescript")
-                                 (lsp-configuration-section "html")
-                                 (lsp-configuration-section "languageFeatures")))
                       (lsp--server-register-capability
                        (lsp-make-registration
                         :id "random-id"
@@ -166,16 +162,14 @@ in the WORKSPACE-ROOT."
   :add-on? t
   :server-id 'volar-doc
   :initialization-options (lambda () (ht-merge (lsp-configuration-section "typescript")
-                                               (ht ("languageFeatures" (ht-merge (ht ("semanticTokens" nil))
-                                                                                 (ht ("documentHighlight" t))
+                                               (ht ("languageFeatures" (ht-merge (ht ("documentHighlight" t))
                                                                                  (ht ("documentLink" t))
-                                                                                 (ht ("codeLens" t))
-                                                                                 (ht ("diagnostics" t)))))))
+                                                                                 (ht ("codeLens" (ht ("showReferencesNotification" t))))
+                                                                                 (ht ("semanticTokens" t))
+                                                                                 (ht ("diagnostics" (ht ("getDocumentVersionRequest" t))))
+                                                                                 (ht ("schemaRequestService" (ht ("getDocumentContentRequest" t)))))))))
   :initialized-fn (lambda (workspace)
                     (with-lsp-workspace workspace
-                      (lsp--set-configuration
-                       (ht-merge (lsp-configuration-section "typescript")
-                                 (lsp-configuration-section "languageFeatures")))
                       (lsp--server-register-capability
                        (lsp-make-registration
                         :id "random-id"
@@ -206,9 +200,6 @@ in the WORKSPACE-ROOT."
                                                (lsp-configuration-section "documentFeatures")))
   :initialized-fn (lambda (workspace)
                     (with-lsp-workspace workspace
-                      (lsp--set-configuration
-                       (ht-merge (lsp-configuration-section "typescript")
-                                 (lsp-configuration-section "documentFeatures")))
                       (lsp--server-register-capability
                        (lsp-make-registration
                         :id "random-id"
