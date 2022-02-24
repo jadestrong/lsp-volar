@@ -88,9 +88,9 @@
    ("languageFeatures.workspaceSymbol" t t)
    ("languageFeatures.completion.defaultTagNameCase" "both" t)
    ("languageFeatures.completion.defaultAttrNameCase" "kebabCase" t t)
-   ("languageFeatures.completion.getDocumentNameCasesRequest" t t)
-   ("languageFeatures.completion.getDocumentSelectionRequest" t t)
-   ("languageFeatures.schemaRequestService.getDocumentContentRequest" t t)
+   ("languageFeatures.completion.getDocumentNameCasesRequest" nil t)
+   ("languageFeatures.completion.getDocumentSelectionRequest" nil t)
+   ("languageFeatures.schemaRequestService.getDocumentContentRequest" nil t)
 
    ("documentFeatures.selectionRange" t t)
    ("documentFeatures.foldingRange" t t)
