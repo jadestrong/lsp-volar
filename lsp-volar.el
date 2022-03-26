@@ -50,6 +50,23 @@
   :type 'string
   :group 'lsp-volar)
 
+(defcustom lsp-volar-completion-tag-casing "both"
+  "Casing conversion for tag completion."
+  :type '(choice
+          (const "both")
+          (const "kebabCase")
+          (const "pascalCase"))
+  :group 'lsp-volar
+  :package-version '(lsp-mode . "8.0.1"))
+
+(defcustom lsp-volar-completion-attr-casing "kebabCase"
+  "Casing conversion for attr completion."
+  :type '(choice
+          (const "kebabCase")
+          (const "camelCase"))
+  :group 'lsp-volar
+  :package-version '(lsp-mode . "8.0.1"))
+
 (defconst lsp-volar--is-windows (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
@@ -87,8 +104,8 @@
    ("languageFeatures.signatureHelp" t t)
    ("languageFeatures.codeAction" t t)
    ("languageFeatures.workspaceSymbol" t t)
-   ("languageFeatures.completion.defaultTagNameCase" "both" t)
-   ("languageFeatures.completion.defaultAttrNameCase" "kebabCase" t t)
+   ("languageFeatures.completion.defaultTagNameCase" lsp-volar-completion-tag-casing t)
+   ("languageFeatures.completion.defaultAttrNameCase" lsp-volar-completion-attr-casing t)
    ("languageFeatures.completion.getDocumentNameCasesRequest" nil t)
    ("languageFeatures.completion.getDocumentSelectionRequest" nil t)
    ("languageFeatures.schemaRequestService.getDocumentContentRequest" nil t)
