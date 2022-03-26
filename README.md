@@ -1,6 +1,9 @@
 # lsp-volar
 Language support for Vue3
 
+**This package has been merged into [lsp-mode](https://github.com/emacs-lsp/lsp-mode), so you can use lsp-mode directly.**
+**There will only be some experimental updates here. Once stable, they will be submitted to lsp-mode.**
+
 # Installation
 
 ## Doom Emacs
@@ -57,10 +60,12 @@ Last use it:
 
    **This will disable the auto completation of third-party libraries and affect the experience, so you don't have to set it to `nil` unless you feel that there is a significant performance imporvement after disabling it** .
 
+2. After `volar 0.32.1` `@volar/server` was renamed to `@volar/vue-language-server` , so you need resintall the new package.
+
 # Language Server
 
-1. use `npm/yarn` , `npm install -g @volar/server`
-2. `M-x lsp-install-server` select `volar-api` or `volar-doc` or `volar-html`
+1. `M-x lsp-install-server` select `volar-api` or `volar-doc` or `volar-html`
+2.  Or use `npm/yarn` , `npm install -g @volar/vue-language-server`
 
 # Customization
 
