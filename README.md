@@ -52,6 +52,82 @@ Last use it:
   :straight t)
 ```
 
+# Hacks
+
+If you prompt `\u0000` *lsp-warn* when performing autocomplete in `Vue template`, you need to use `advice-add` to `override` the following function `lsp--create-filter-function` to filter the special characters. see this issue https://github.com/johnsoncodehk/volar/issues/1118 .
+
+In doom-emacs, you can place this code in your `~/.doom.d/config.el` ,otherwise, you need to use `advice-add` to replace `defadvice!` .
+
+``` emacs-lisp
+(defadvice! +lsp--create-filter-function (workspace)
+  :override #'lsp--create-filter-function
+  (let ((body-received 0)
+        leftovers body-length body chunk)
+    (lambda (_proc input)
+      (setf chunk (if (s-blank? leftovers)
+                      input
+                    (concat leftovers input)))
+
+      (let (messages)
+        (while (not (s-blank? chunk))
+          (if (not body-length)
+              ;; Read headers
+              (if-let ((body-sep-pos (string-match-p "\r\n\r\n" chunk)))
+                  ;; We've got all the headers, handle them all at once:
+                  (setf body-length (lsp--get-body-length
+                                     (mapcar #'lsp--parse-header
+                                             (split-string
+                                              (substring-no-properties chunk
+                                                                       (or (string-match-p "Content-Length" chunk)
+                                                                           (error "Unable to find Content-Length header."))
+                                                                       body-sep-pos)
+                                              "\r\n")))
+                        body-received 0
+                        leftovers nil
+                        chunk (substring-no-properties chunk (+ body-sep-pos 4)))
+
+                ;; Haven't found the end of the headers yet. Save everything
+                ;; for when the next chunk arrives and await further input.
+                (setf leftovers chunk
+                      chunk nil))
+            (let* ((chunk-length (string-bytes chunk))
+                   (left-to-receive (- body-length body-received))
+                   (this-body (if (< left-to-receive chunk-length)
+                                  (prog1 (substring-no-properties chunk 0 left-to-receive)
+                                    (setf chunk (substring-no-properties chunk left-to-receive)))
+                                (prog1 chunk
+                                  (setf chunk nil))))
+                   (body-bytes (string-bytes this-body)))
+              (push this-body body)
+              (setf body-received (+ body-received body-bytes))
+              (when (>= chunk-length left-to-receive)
+                (condition-case err
+                    (with-temp-buffer
+                      (apply #'insert
+                             (nreverse
+                              (prog1 body
+                                (setf leftovers nil
+                                      body-length nil
+                                      body-received nil
+                                      body nil))))
+                      (decode-coding-region (point-min)
+                                            (point-max)
+                                            'utf-8)
+                      (goto-char (point-min))
+                      (while (search-forward "\\u0000" nil t)
+                        (replace-match "" nil t))
+                      (goto-char (point-min))
+                      (push (lsp-json-read-buffer) messages))
+
+                  (error
+                   (lsp-warn "Failed to parse the following chunk:\n'''\n%s\n'''\nwith message %s"
+                             (concat leftovers input)
+                             err)))))))
+        (mapc (lambda (msg)
+                (lsp--parser-on-message msg workspace))
+              (nreverse messages))))))
+```
+
 # Changelog
 
 1. In `volar 0.30.0` you can skip calculate auto import by set `lsp-typescript-suggest-auto-imports` to `nil` to improve the completion speed. Check [this issue](https://github.com/johnsoncodehk/volar/issues/808#issuecomment-998895416).
