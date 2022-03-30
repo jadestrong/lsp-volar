@@ -153,6 +153,21 @@ It is enabled by default. If you want disable it, add `(setq lsp-volar-take-over
 ### `lsp-volar-activate-file`
 If your project don't have a `package.json` file with `vue` dependencies in `workspace-root`, such as a *yarn workspace* / *mono-repo* project, you can add a file with a custom name to force enable `@volar/server` for this project. The default file name is `.volarrc`. You can specify any file name by modifying the file `lsp-volar-activate-file` variable.
 
+### lsp-volar-completion-tag-casing
+Type: `(choice (const both) (const kebabCase) (const pascalCase))`
+
+Default: `both`
+
+Casing conversion for tag completion
+
+### lsp-volar-completion-attr-casing
+Type: `(choice (const kebabCase) (const camelCase))`
+
+Default: `kebabCase`
+
+Casing conversion for attr completion.
+
+
 # Reference
 
 1. [Tutorial: nvim-lspconfig - how to set up multiple language servers](https://github.com/johnsoncodehk/volar/discussions/606 "Tutorial: nvim-lspconfig - how to set up multiple language servers")  
