@@ -295,7 +295,9 @@ in the WORKSPACE-ROOT."
                                         (if padding-left " " "")
                                         (propertize (lsp-volar-format-inlay label kind)
                                                     'font-lock-face (lsp-rust-analyzer-face-for-inlay kind))
-                                        (if padding-right " " "")))))))))
+                                        (if padding-right " " ""))))))
+       :mode 'tick))
+  nil)
 
 (defun lsp-volar-format-inlay (label kind)
   (if lsp-volar-server-format-inlay-hints
