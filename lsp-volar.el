@@ -280,22 +280,22 @@ in the WORKSPACE-ROOT."
        (lambda (res)
          (remove-overlays (point-min) (point-max) 'lsp-volar-inlay-hint t)
          (dolist (hint res)
-           (-let* (((&javascript:InlayHint :text :position :kind :whitespace-before? :whitespace-after?) hint)
-                   (pos (lsp--point-to-position position))
+           (-let* (((&rust-analyzer:InlayHint :position :label :kind :padding-left :padding-right) hint)
+                   (pos (lsp--position-to-point position))
                    (overlay (make-overlay pos pos nil 'front-advance 'end-advance)))
              (overlay-put overlay 'lsp-volar-inlay-hint t)
              (overlay-put overlay 'before-string
                           (format "%s%s%s"
-                                        (if (and whitespace-before? (not (string= kind lsp/javascript-inlay-hint-kind-type-hint))) " " "")
-                                        (propertize (lsp-volar-format-inlay text kind)
+                                        (if (and padding-left (not (eql kind lsp/rust-analyzer-inlay-hint-kind-type-hint))) " " "")
+                                        (propertize (lsp-volar-format-inlay label kind)
                                                     'font-lock-face (lsp-javascript-face-for-inlay kind))
-                                        (if whitespace-after? " " "")))))))))
-(defun lsp-volar-format-inlay (text kind)
+                                        (if padding-right " " "")))))))))
+(defun lsp-volar-format-inlay (label kind)
   (cond
-   ((eql kind lsp/javascript-inlay-hint-kind-type-hint) (format lsp-javascript-inlay-type-format text))
-   ((eql kind lsp/javascript-inlay-hint-kind-parameter-hint) (format lsp-javascript-inlay-param-format text))
+   ((eql kind lsp/rust-analyzer-inlay-hint-kind-type-hint) (format lsp-javascript-inlay-type-format label))
+   ((eql kind lsp/rust-analyzer-inlay-hint-kind-parameter-hint) (format lsp-javascript-inlay-param-format label))
    ;; ((eql kind lsp/javascript-inlay-hint-kind-enum-hint) (format lsp-javascript-inlay-enum-format text))
-   (t text)))
+   (t label)))
 
 
 (defun lsp-volar-inlay-hints-change-handler (&rest _rest)
