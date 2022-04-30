@@ -73,6 +73,12 @@
   :group 'lsp-volar
   :package-version '(lsp-mode . "8.0.1"))
 
+(defcustom lsp-volar-server-format-inlay-hints t
+  "Is server format inlay hints."
+  :type 'boolean
+  :group 'lsp-volar
+  :package-version '(lsp-mode . "8.0.1"))
+
 (defconst lsp-volar--is-windows (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
@@ -286,16 +292,18 @@ in the WORKSPACE-ROOT."
              (overlay-put overlay 'lsp-volar-inlay-hint t)
              (overlay-put overlay 'before-string
                           (format "%s%s%s"
-                                        (if (and padding-left (not (eql kind lsp/rust-analyzer-inlay-hint-kind-type-hint))) " " "")
+                                        (if padding-left " " "")
                                         (propertize (lsp-volar-format-inlay label kind)
-                                                    'font-lock-face (lsp-javascript-face-for-inlay kind))
+                                                    'font-lock-face (lsp-rust-analyzer-face-for-inlay kind))
                                         (if padding-right " " "")))))))))
+
 (defun lsp-volar-format-inlay (label kind)
-  (cond
-   ((eql kind lsp/rust-analyzer-inlay-hint-kind-type-hint) (format lsp-javascript-inlay-type-format label))
-   ((eql kind lsp/rust-analyzer-inlay-hint-kind-parameter-hint) (format lsp-javascript-inlay-param-format label))
-   ;; ((eql kind lsp/javascript-inlay-hint-kind-enum-hint) (format lsp-javascript-inlay-enum-format text))
-   (t label)))
+  (if lsp-volar-server-format-inlay-hints
+      label
+    (cond
+     ((eql kind lsp/rust-analyzer-inlay-hint-kind-type-hint) (format lsp-javascript-inlay-type-format label))
+     ((eql kind lsp/rust-analyzer-inlay-hint-kind-parameter-hint) (format lsp-javascript-inlay-param-format label))
+     (t label))))
 
 
 (defun lsp-volar-inlay-hints-change-handler (&rest _rest)
