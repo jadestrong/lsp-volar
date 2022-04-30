@@ -68,6 +68,7 @@
   :package-version '(lsp-mode . "8.0.1"))
 
 (defcustom lsp-volar-inlay-hints nil
+  "Show inlay hints."
   :type 'boolean
   :group 'lsp-volar
   :package-version '(lsp-mode . "8.0.1"))
@@ -145,6 +146,10 @@ in the WORKSPACE-ROOT."
                (string= (file-name-extension filename) "vue")))
    (string= (file-name-extension filename) "vue")))
 
+(defun lsp-volar-initialized? ()
+  (when-let ((workspace (lsp-find-workspace 'volar-doc (buffer-file-name))))
+    (eq 'initialized (lsp--workspace-status workspace))))
+
 (lsp-register-client
  (make-lsp-client
   :new-connection (lsp-stdio-connection
@@ -206,6 +211,9 @@ in the WORKSPACE-ROOT."
                                               ,(lsp-make-file-system-watcher :glob-pattern "**/*.jsx")
                                               ,(lsp-make-file-system-watcher :glob-pattern "**/*.tsx")
                                               ,(lsp-make-file-system-watcher :glob-pattern "**/*.json")])))))
+  :after-open-fn (lambda ()
+                   (when lsp-volar-inlay-hints
+                     (lsp-volar-inlay-hints-mode)))
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
@@ -239,6 +247,59 @@ in the WORKSPACE-ROOT."
   :download-server-fn (lambda (_client callback error-callback _update?)
                         (lsp-package-ensure 'volar-language-server
                                             callback error-callback))))
+
+;; inlay hints
+
+(defvar-local lsp-volar-inlay-hints-timer nil)
+
+(defun lsp-volar-update-inlay-hints (buffer)
+  "Update inlay hints of the BUFFER."
+  (if (and (lsp-volar-initialized?)
+           (eq buffer (current-buffer)))
+      (lsp-request-async
+       "textDocument/inlayHint"
+       (lsp-make-javascript-inlay-hints-params
+        :text-document (lsp--text-document-identifier)
+        :range (if (use-region-p)
+                   (lsp--region-to-range (region-beginning) (region-end))
+                 (lsp--region-to-range (point-min) (point-max))))
+       (lambda (res)
+         (remove-overlays (point-min) (point-max) 'lsp-volar-inlay-hint t)
+         (dolist (hint res)
+           (-let* (((&javascript:InlayHint :text :position :kind :whitespace-before? :whitespace-after?) hint)
+                   (pos (lsp--point-to-position position))
+                   (overlay (make-overlay pos pos nil 'front-advance 'end-advance)))
+             (overlay-put overlay 'lsp-volar-inlay-hint t)
+             (overlay-put overlay 'before-string
+                          (format "%s%s%s"
+                                        (if (and whitespace-before? (not (string= kind lsp/javascript-inlay-hint-kind-type-hint))) " " "")
+                                        (propertize (lsp-volar-format-inlay text kind)
+                                                    'font-lock-face (lsp-javascript-face-for-inlay kind))
+                                        (if whitespace-after? " " "")))))))))
+(defun lsp-volar-format-inlay (text kind)
+  (cond
+   ((eql kind lsp/javascript-inlay-hint-kind-type-hint) (format lsp-javascript-inlay-type-format text))
+   ((eql kind lsp/javascript-inlay-hint-kind-parameter-hint) (format lsp-javascript-inlay-param-format text))
+   ;; ((eql kind lsp/javascript-inlay-hint-kind-enum-hint) (format lsp-javascript-inlay-enum-format text))
+   (t text)))
+
+
+(defun lsp-volar-inlay-hints-change-handler (&rest _rest)
+  (when lsp-volar-inlay-hints-timer
+    (cancel-timer lsp-volar-inlay-hints-timer))
+  (setq lsp-volar-inlay-hints-timer
+        (run-with-idle-timer 0.1 nil #'lsp-volar-update-inlay-hints (current-buffer))))
+
+(define-minor-mode lsp-volar-inlay-hints-mode
+  "Mode for displaying inlay hints."
+  :lighter nil
+  (cond
+   (lsp-volar-inlay-hints-mode
+    (lsp-volar-update-inlay-hints (current-buffer))
+    (add-hook 'lsp-on-change-hook #'lsp-volar-inlay-hints-change-handler nil t))
+   (t
+    (remove-overlays (point-min) (point-max) 'lsp-volar-inlay-hint t)
+    (remove 'lsp-on-change-hook #'lsp-volar-inlay-hints-change-handler t))))
 
 (provide 'lsp-volar)
 ;;; lsp-volar.el ends here
