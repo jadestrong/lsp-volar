@@ -321,7 +321,7 @@ in the WORKSPACE-ROOT."
     (add-hook 'lsp-on-change-hook #'lsp-volar-inlay-hints-change-handler nil t))
    (t
     (remove-overlays (point-min) (point-max) 'lsp-volar-inlay-hint t)
-    (remove 'lsp-on-change-hook #'lsp-volar-inlay-hints-change-handler t))))
+    (remove-hook 'lsp-on-change-hook #'lsp-volar-inlay-hints-change-handler t))))
 
 (provide 'lsp-volar)
 ;;; lsp-volar.el ends here
