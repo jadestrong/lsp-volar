@@ -99,6 +99,20 @@
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
                                         (lsp-volar-get-typescript-server-path))) t)
+   ("typescript.inlayHints.enumMemberValues.enabled" lsp-javascript-display-enum-member-value-hints t)
+   ("typescript.inlayHints.functionLikeReturnTypes.enabled" lsp-javascript-display-return-type-hints t)
+   ("typescript.inlayHints.parameterNames.enabled" lsp-javascript-display-parameter-name-hints t)
+   ("typescript.inlayHints.parameterTypes.enabled" lsp-javascript-display-parameter-type-hints t)
+   ("typescript.inlayHints.propertyDeclarationTypes.enabled" lsp-javascript-display-property-declaration-type-hints t)
+   ("typescript.inlayHints.variableTypes.enabled" lsp-javascript-display-variable-type-hints t)
+
+   ("javascript.inlayHints.enumMemberValues.enabled" lsp-javascript-display-enum-member-value-hints t)
+   ("javascript.inlayHints.functionLikeReturnTypes.enabled" lsp-javascript-display-return-type-hints t)
+   ("javascript.inlayHints.parameterNames.enabled" lsp-javascript-display-parameter-name-hints t)
+   ("javascript.inlayHints.parameterTypes.enabled" lsp-javascript-display-parameter-type-hints t)
+   ("javascript.inlayHints.propertyDeclarationTypes.enabled" lsp-javascript-display-property-declaration-type-hints t)
+   ("javascript.inlayHints.variableTypes.enabled" lsp-javascript-display-variable-type-hints t)
+
    ("languageFeatures.references" t t)
    ("languageFeatures.implementation" t t)
    ("languageFeatures.definition" t t)
