@@ -67,6 +67,11 @@
   :group 'lsp-volar
   :package-version '(lsp-mode . "8.0.1"))
 
+(defcustom lsp-volar-inlay-hints nil
+  :type 'boolean
+  :group 'lsp-volar
+  :package-version '(lsp-mode . "8.0.1"))
+
 (defconst lsp-volar--is-windows (memq system-type '(cygwin windows-nt ms-dos)))
 (defun lsp-volar-get-typescript-server-path ()
   "Get tsserver.js file path."
@@ -184,6 +189,7 @@ in the WORKSPACE-ROOT."
                                                                                  (ht ("documentLink" t))
                                                                                  (ht ("codeLens" (ht ("showReferencesNotification" t))))
                                                                                  (ht ("semanticTokens" t))
+                                                                                 (ht ("inlayHints" lsp-volar-inlay-hints))
                                                                                  (ht ("diagnostics" (ht ("getDocumentVersionRequest" nil))))
                                                                                  (ht ("schemaRequestService" (ht ("getDocumentContentRequest" nil)))))))))
   :initialized-fn (lambda (workspace)
