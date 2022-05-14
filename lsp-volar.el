@@ -84,8 +84,8 @@
   "Get tsserver.js file path."
   (if-let ((package-path (lsp-package-path 'typescript))
            (system-server-path (apply #'f-join (if lsp-volar--is-windows
-                                                   (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -1) '("node_modules" "typescript" "lib" "tsserver.js"))
-                                                 (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -2) '("lib" "tsserver.js")))))
+                                                   (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -1) '("node_modules" "typescript" "lib" "typescript.js"))
+                                                 (append (cl-subseq (f-split (file-truename (lsp-package-path 'typescript))) 0 -2) '("lib" "typescript.js")))))
            (is-exist (f-file-p system-server-path)))
       system-server-path
     (progn (lsp--error "[lsp-volar] Typescript is not detected correctly. Please ensure the npm package typescript is installed in your project or system (npm install -g typescript), otherwise open an issue") "")))
@@ -101,7 +101,7 @@
 
 (lsp-register-custom-settings
  '(("typescript.serverPath" (lambda () (if-let ((project-root (lsp-workspace-root))
-                                                (server-path (f-join project-root "node_modules/typescript/lib/tsserverlibrary.js"))
+                                                (server-path (f-join project-root "node_modules/typescript/lib/typescript.js"))
                                                 (is-exist (file-exists-p server-path)))
                                            server-path
                                         (lsp-volar-get-typescript-server-path))) t)
