@@ -52,6 +52,16 @@ Last use it:
   :straight t)
 ```
 
+# Changelog
+1. **Breaking change** [2022-10-29] You must upgrade `@volar/vue-language-server` to the latest version, see this [MR](https://github.com/johnsoncodehk/volar/pull/1916). **Now lsp-volar will only start one server(vue-semantic-server).**
+2. After `volar 0.32.1` `@volar/server` was renamed to `@volar/vue-language-server` , so you need resintall the new package.
+3. In `volar 0.30.0` you can skip calculate auto import by set `lsp-typescript-suggest-auto-imports` to `nil` to improve the completion speed. Check [this issue](https://github.com/johnsoncodehk/volar/issues/808#issuecomment-998895416).
+   
+   `lsp-typescript-suggest-auto-imports` is a setting registed by `lsp-vetur`.
+
+   **This will disable the auto completation of third-party libraries and affect the experience, so you don't have to set it to `nil` unless you feel that there is a significant performance imporvement after disabling it** .
+
+
 # Hacks
 
 If you prompt `\u0000` *lsp-warn* when performing autocomplete in `Vue template`, you need to use `advice-add` to `override` the following function `lsp--create-filter-function` to filter the special characters. see this issue https://github.com/johnsoncodehk/volar/issues/1118 .
@@ -128,19 +138,9 @@ In doom-emacs, you can place this code in your `~/.doom.d/config.el` ,otherwise,
               (nreverse messages))))))
 ```
 
-# Changelog
-
-1. In `volar 0.30.0` you can skip calculate auto import by set `lsp-typescript-suggest-auto-imports` to `nil` to improve the completion speed. Check [this issue](https://github.com/johnsoncodehk/volar/issues/808#issuecomment-998895416).
-   
-   `lsp-typescript-suggest-auto-imports` is a setting registed by `lsp-vetur`.
-
-   **This will disable the auto completation of third-party libraries and affect the experience, so you don't have to set it to `nil` unless you feel that there is a significant performance imporvement after disabling it** .
-
-2. After `volar 0.32.1` `@volar/server` was renamed to `@volar/vue-language-server` , so you need resintall the new package.
-
 # Language Server
 
-1. `M-x lsp-install-server` select `volar-api` or `volar-doc` or `volar-html`
+1. `M-x lsp-install-server` select `vue-semantic-server`
 2.  Or use `npm/yarn` , `npm install -g @volar/vue-language-server`
 
 # Customization
